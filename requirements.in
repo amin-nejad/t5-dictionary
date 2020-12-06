@@ -1,0 +1,7 @@
+# requirements.in
+notebook
+pandas
+torch
+transformers
+vaex
+wandb
