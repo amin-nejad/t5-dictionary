@@ -1,6 +1,8 @@
 # requirements.in
+black
 notebook
 pandas
+pytorch-lightning
 torch
 transformers
 vaex

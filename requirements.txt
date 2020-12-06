@@ -4,23 +4,26 @@
 #
 #    pip-compile requirements.in
 #
+absl-py==0.11.0           # via tensorboard
 aplus==0.11.0             # via vaex-core
+appdirs==1.4.4            # via black
 argon2-cffi==20.1.0       # via notebook
 astropy==4.2              # via vaex-core
 async-generator==1.10     # via nbclient
 attrs==20.3.0             # via jsonschema
 backcall==0.2.0           # via ipython
+black==20.8b1             # via -r requirements.in
 bleach==3.2.1             # via nbconvert
 boto3==1.16.25            # via s3fs
 botocore==1.19.25         # via boto3, s3fs, s3transfer
 bqplot==0.12.19           # via vaex-jupyter
 branca==0.4.1             # via ipyleaflet
 cached-property==1.5.2    # via h5py
-cachetools==4.1.1         # via vaex-server
+cachetools==4.1.1         # via google-auth, vaex-server
 certifi==2020.11.8        # via requests, sentry-sdk
 cffi==1.14.4              # via argon2-cffi
 chardet==3.0.4            # via requests
-click==7.1.2              # via sacremoses, wandb
+click==7.1.2              # via black, sacremoses, wandb
 cloudpickle==1.6.0        # via vaex-core
 configparser==5.0.1       # via wandb
 cycler==0.10.0            # via matplotlib
@@ -31,12 +34,16 @@ defusedxml==0.6.0         # via nbconvert
 docker-pycreds==0.4.0     # via wandb
 entrypoints==0.3          # via nbconvert
 filelock==3.0.12          # via transformers
-future==0.18.2            # via torch, vaex-core
+fsspec==0.8.4             # via pytorch-lightning
+future==0.18.2            # via pytorch-lightning, torch, vaex-core
 gitdb==4.0.5              # via gitpython
 gitpython==3.1.11         # via wandb
+google-auth-oauthlib==0.4.2  # via tensorboard
+google-auth==1.23.0       # via google-auth-oauthlib, tensorboard
+grpcio==1.34.0            # via tensorboard
 h5py==3.1.0               # via vaex-hdf5
 idna==2.10                # via requests
-importlib-metadata==3.1.1  # via jsonschema
+importlib-metadata==3.1.1  # via jsonschema, markdown
 ipydatawidgets==4.1.0     # via pythreejs
 ipykernel==5.3.4          # via ipympl, ipywidgets, notebook
 ipyleaflet==0.13.3        # via vaex-jupyter
@@ -58,20 +65,24 @@ jupyter-core==4.7.0       # via jupyter-client, nbconvert, nbformat, notebook
 jupyterlab-pygments==0.1.2  # via nbconvert
 kiwisolver==1.3.1         # via matplotlib
 llvmlite==0.34.0          # via numba
+markdown==3.3.3           # via tensorboard
 markupsafe==1.1.1         # via jinja2
 matplotlib==3.3.3         # via ipympl, vaex-arrow, vaex-viz
 mistune==0.8.4            # via nbconvert
+mypy-extensions==0.4.3    # via black
 nbclient==0.5.1           # via nbconvert
 nbconvert==6.0.7          # via notebook
 nbformat==5.0.8           # via ipywidgets, nbclient, nbconvert, notebook
 nest-asyncio==1.4.3       # via nbclient, vaex-core
 notebook==6.1.5           # via -r requirements.in, widgetsnbextension
 numba==0.51.2             # via vaex-ml
-numpy==1.19.4             # via astropy, bqplot, dask, h5py, ipydatawidgets, ipyvolume, matplotlib, numba, pandas, pyarrow, pyerfa, pythreejs, torch, transformers, vaex-core, xarray
+numpy==1.19.4             # via astropy, bqplot, dask, h5py, ipydatawidgets, ipyvolume, matplotlib, numba, pandas, pyarrow, pyerfa, pythreejs, pytorch-lightning, tensorboard, torch, transformers, vaex-core, xarray
+oauthlib==3.1.0           # via requests-oauthlib
 packaging==20.7           # via bleach, transformers
 pandas==1.1.4             # via -r requirements.in, bqplot, vaex-core, xarray
 pandocfilters==1.4.3      # via nbconvert
 parso==0.7.1              # via jedi
+pathspec==0.8.1           # via black
 pathtools==0.1.2          # via watchdog
 pexpect==4.8.0            # via ipython
 pickleshare==0.7.5        # via ipython
@@ -80,10 +91,12 @@ progressbar2==3.53.1      # via vaex-core
 prometheus-client==0.9.0  # via notebook
 promise==2.3              # via wandb
 prompt-toolkit==3.0.8     # via ipython
-protobuf==3.14.0          # via transformers, wandb
+protobuf==3.14.0          # via tensorboard, transformers, wandb
 psutil==5.7.3             # via vaex-core, wandb
 ptyprocess==0.6.0         # via pexpect, terminado
 pyarrow==2.0.0            # via vaex-arrow
+pyasn1-modules==0.2.8     # via google-auth
+pyasn1==0.4.8             # via pyasn1-modules, rsa
 pycparser==2.20           # via cffi
 pyerfa==1.7.1.1           # via astropy
 pygments==2.7.2           # via ipython, jupyterlab-pygments, nbconvert
@@ -92,11 +105,14 @@ pyrsistent==0.17.3        # via jsonschema
 python-dateutil==2.8.1    # via botocore, jupyter-client, matplotlib, pandas, wandb
 python-utils==2.4.0       # via progressbar2
 pythreejs==2.2.1          # via ipyvolume
+pytorch-lightning==1.0.8  # via -r requirements.in
 pytz==2020.4              # via pandas
-pyyaml==5.3.1             # via dask, vaex-core, wandb
+pyyaml==5.3.1             # via dask, pytorch-lightning, vaex-core, wandb
 pyzmq==20.0.0             # via jupyter-client, notebook
-regex==2020.11.13         # via sacremoses, transformers
-requests==2.25.0          # via ipyvolume, transformers, vaex-core, wandb
+regex==2020.11.13         # via black, sacremoses, transformers
+requests-oauthlib==1.3.0  # via google-auth-oauthlib
+requests==2.25.0          # via ipyvolume, requests-oauthlib, tensorboard, transformers, vaex-core, wandb
+rsa==4.6                  # via google-auth
 s3fs==0.2.2               # via vaex-hdf5
 s3transfer==0.3.3         # via boto3
 sacremoses==0.0.43        # via transformers
@@ -104,21 +120,25 @@ send2trash==1.5.0         # via notebook
 sentencepiece==0.1.91     # via transformers
 sentry-sdk==0.19.4        # via wandb
 shortuuid==1.0.1          # via wandb
-six==1.15.0               # via argon2-cffi, bleach, cycler, docker-pycreds, ipydatawidgets, jsonschema, progressbar2, promise, protobuf, python-dateutil, python-utils, s3fs, sacremoses, vaex-core, wandb
+six==1.15.0               # via absl-py, argon2-cffi, bleach, cycler, docker-pycreds, google-auth, grpcio, ipydatawidgets, jsonschema, progressbar2, promise, protobuf, python-dateutil, python-utils, s3fs, sacremoses, tensorboard, vaex-core, wandb
 smmap==3.0.4              # via gitdb
 subprocess32==3.5.4       # via wandb
 tabulate==0.8.7           # via vaex-core
+tensorboard-plugin-wit==1.7.0  # via tensorboard
+tensorboard==2.4.0        # via pytorch-lightning
 terminado==0.9.1          # via notebook
 testpath==0.4.4           # via nbconvert
 tokenizers==0.9.3         # via transformers
+toml==0.10.2              # via black
 toolz==0.11.1             # via dask
-torch==1.7.0              # via -r requirements.in
+torch==1.7.0              # via -r requirements.in, pytorch-lightning
 tornado==6.1              # via ipykernel, jupyter-client, notebook, terminado, vaex-server
-tqdm==4.54.0              # via sacremoses, transformers
+tqdm==4.54.0              # via pytorch-lightning, sacremoses, transformers
 traitlets==5.0.5          # via bqplot, ipykernel, ipython, ipyvolume, ipywidgets, jupyter-client, jupyter-core, nbclient, nbconvert, nbformat, notebook, traittypes, vaex-ml
 traittypes==0.2.1         # via bqplot, ipydatawidgets, ipyleaflet, ipyvolume
 transformers==3.5.1       # via -r requirements.in
-typing-extensions==3.7.4.3  # via torch
+typed-ast==1.4.1          # via black
+typing-extensions==3.7.4.3  # via black, torch
 urllib3==1.26.2           # via botocore, requests, sentry-sdk
 vaex-arrow==0.5.1         # via vaex
 vaex-astro==0.7.0         # via vaex
@@ -133,6 +153,8 @@ wandb==0.10.12            # via -r requirements.in
 watchdog==0.10.4          # via wandb
 wcwidth==0.2.5            # via prompt-toolkit
 webencodings==0.5.1       # via bleach
+werkzeug==1.0.1           # via tensorboard
+wheel==0.36.1             # via tensorboard
 widgetsnbextension==3.5.1  # via ipywidgets
 xarray==0.16.1            # via vaex-jupyter
 zipp==3.4.0               # via importlib-metadata
