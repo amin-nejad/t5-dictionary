@@ -1,3 +1,6 @@
 wandb/*
 data/*
 .ipynb_checkpoints/*
+lightning_logs/*
+.vscode
+__pycache__
