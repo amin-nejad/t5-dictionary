@@ -1,19 +1,15 @@
 """Model defined here."""
-import os
-import time
-
-import dotenv
 import numpy as np
 import pandas as pd
 import pytorch_lightning as pl
 import torch
 import torch.nn.functional as F
+import wandb
 from torch import cuda
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 from transformers import T5ForConditionalGeneration, T5Tokenizer
 
-import wandb
-from dataset import CustomDataset
+from src.dataset import CustomDataset
 
 
 class T5Finetuner(pl.LightningModule):
@@ -21,23 +17,21 @@ class T5Finetuner(pl.LightningModule):
 
     Args:
         path_to_dataset (str): string path to dataset
+        config (wandb.sdk.wandb_config.Config): config dictionary containing hparams
         model_name (str, optional): t5 model name. Defaults to "t5-small".
     """
 
-    def __init__(self, path_to_dataset: str, model_name="t5-small"):
+    def __init__(
+        self,
+        path_to_dataset: str,
+        config: wandb.sdk.wandb_config.Config,
+        model_name: str = None,
+    ):
 
         super().__init__()
 
-        dotenv.load_dotenv()
-        wandb.init(project=model_name + f"-{time.time()}")
-        config = wandb.config
-        config.TRAIN_BATCH_SIZE = os.getenv("TRAIN_BATCH_SIZE")
-        config.VALID_BATCH_SIZE = os.getenv("VALID_BATCH_SIZE")
-        config.TRAIN_EPOCHS = os.getenv("TRAIN_EPOCHS")
-        config.LEARNING_RATE = os.getenv("LEARNING_RATE")
-        config.SEED = os.getenv("SEED")
-        config.MAX_INPUT_LEN = os.getenv("MAX_INPUT_LEN")
-        config.MAX_OUTPUT_LEN = os.getenv("MAX_OUTPUT_LEN")
+        if not model_name:
+            model_name = "t5-small"
 
         torch.manual_seed(config.SEED)
         np.random.seed(config.SEED)
