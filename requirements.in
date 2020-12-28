@@ -1,9 +1,12 @@
 # requirements.in
 black
+fire
 notebook
 pandas
+python-dotenv
 pytorch-lightning
 torch
+tqdm
 transformers
 vaex
 wandb
