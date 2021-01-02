@@ -1,6 +1,7 @@
 # requirements.in
 black
 fire
+jupytext
 notebook
 pandas
 python-dotenv
