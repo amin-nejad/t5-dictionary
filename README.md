@@ -39,3 +39,31 @@ python -m src.train
 ```
 
 Arguments can optionally be provided e.g. `--model_name=t5-large`
+
+## Deployment
+
+This is done using `cortex`.
+
+First follow the instructions [here](https://docs.cortex.dev/clusters/gcp/credentials) to create new service, download the key and set it as an environment variable.
+
+Then, spin up the cluster:
+
+```bash
+cd cortex && cortex cluster-gcp up --config=cluster.yaml
+```
+
+This will spin up a cluster. To create the API and run an example, run the `consume.py` file.
+
+To spin down the cluster:
+
+```bash
+ cortex cluster-gcp down
+```
+
+### Debugging
+
+`cortex get <api-name>`
+
+or
+
+`cortex logs <api-name>`
