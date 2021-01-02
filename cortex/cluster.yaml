@@ -1,0 +1,22 @@
+# cluster.yaml
+
+# GKE cluster name
+cluster_name: cortex
+
+# GCP project ID
+project: theta-trees-299322
+
+# GCP zone for your cluster
+zone: us-central1-a
+
+# instance type
+instance_type: e2-standard-4
+
+# GPU to attach to your instance (optional)
+# accelerator_type: nvidia-tesla-v100
+
+# minimum number of instances
+min_instances: 1
+
+# maximum number of instances
+max_instances: 5
