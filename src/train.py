@@ -16,13 +16,15 @@ def main(path_to_dataset: str = "data/dictionary.csv", model_name: str = None):
         cfg = yaml.load(stream)
     wandb.init(project=f"t5-dictionary-{time.time()}", config=cfg["hyperparameters"])
 
+    num_gpus = cfg["NUM_GPUS"]
+
     model = T5Finetuner(
         path_to_dataset=path_to_dataset,
         config=wandb.config,
         model_name=model_name,
     )
 
-    trainer = pl.Trainer()
+    trainer = pl.Trainer(gpus=list(range(num_gpus)))
     trainer.fit(model)
 
 
