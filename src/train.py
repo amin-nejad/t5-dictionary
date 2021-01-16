@@ -24,7 +24,7 @@ def main(path_to_dataset: str = "data/dictionary.csv", model_name: str = None):
         model_name=model_name,
     )
 
-    trainer = pl.Trainer(gpus=num_gpus, accelerator="dp")
+    trainer = pl.Trainer(gpus=num_gpus, accelerator="ddp", num_nodes=1)
     trainer.fit(model)
 
 
