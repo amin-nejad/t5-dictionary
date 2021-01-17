@@ -1,11 +1,12 @@
 """Model defined here."""
 
-from typing import Dict, Union
+from typing import Dict, List, Union
 
 import numpy as np
 import pandas as pd
 import pytorch_lightning as pl
 import torch
+from pytorch_lightning.metrics.nlp import BLEUScore
 from torch.utils.data import DataLoader
 from transformers import T5ForConditionalGeneration, T5Tokenizer
 
@@ -52,52 +53,8 @@ class T5Finetuner(pl.LightningModule):
             self.hparams.MAX_OUTPUT_LEN,
         )
 
-    def forward(
-        self,
-        input_ids,
-        attention_mask=None,
-        decoder_input_ids=None,
-        lm_labels=None,
-    ):
-        return self.model(
-            input_ids,
-            attention_mask=attention_mask,
-            decoder_input_ids=decoder_input_ids,
-            lm_labels=lm_labels,
-        )
-
-    def training_step(self, batch, batch_idx):
-
-        pad_token_id = self.tokenizer.pad_token_id
-        source_ids, source_mask, y = (
-            batch["source_ids"],
-            batch["source_mask"],
-            batch["target_ids"],
-        )
-        y_ids = y[:, :-1].contiguous()
-        lm_labels = y[:, 1:].clone()
-
-        # Replace pad token id with -100
-        # See https://github.com/huggingface/transformers/issues/6238
-        lm_labels[y[:, 1:] == pad_token_id] = -100
-
-        outputs = self(
-            source_ids,
-            attention_mask=source_mask,
-            decoder_input_ids=y_ids,
-            lm_labels=lm_labels,
-        )
-        loss = outputs[0]
-
-        return loss
-
-    def validation_step(self, batch, batch_idx):
-
-        source_ids, source_mask, y = (
-            batch["source_ids"],
-            batch["source_mask"],
-            batch["target_ids"],
-        )
+    def forward(self, source_ids: torch.Tensor, source_mask: torch.Tensor = None):
+        """Forward method for performing inference."""
 
         generated_ids = self.model.generate(
             input_ids=source_ids,
@@ -114,6 +71,54 @@ class T5Finetuner(pl.LightningModule):
             )
             for g in generated_ids
         ]
+
+        return preds
+
+    def _get_loss(self, source_ids, source_mask, y) -> float:
+        """Returns loss. Used by both training and validation loops."""
+
+        pad_token_id = self.tokenizer.pad_token_id
+        y_ids = y[:, :-1].contiguous()
+        lm_labels = y[:, 1:].clone()
+
+        # Replace pad token id with -100
+        # See https://github.com/huggingface/transformers/issues/6238
+        lm_labels[y[:, 1:] == pad_token_id] = -100
+
+        outputs = self.model(
+            source_ids,
+            attention_mask=source_mask,
+            decoder_input_ids=y_ids,
+            lm_labels=lm_labels,
+        )
+        loss = outputs[0]
+        return loss.item()
+
+    def training_step(self, batch, batch_idx):
+
+        source_ids, source_mask, y = (
+            batch["source_ids"],
+            batch["source_mask"],
+            batch["target_ids"],
+        )
+
+        loss = self._get_loss(source_ids, source_mask, y)
+        self.log("train_loss", loss)
+
+        return loss
+
+    def validation_step(self, batch, batch_idx):
+
+        source_ids, source_mask, y = (
+            batch["source_ids"],
+            batch["source_mask"],
+            batch["target_ids"],
+        )
+
+        loss = self._get_loss(source_ids, source_mask, y)
+
+        preds = self(source_ids, source_mask)
+
         target = [
             self.tokenizer.decode(
                 t, skip_special_tokens=True, clean_up_tokenization_spaces=True
@@ -121,7 +126,10 @@ class T5Finetuner(pl.LightningModule):
             for t in y
         ]
 
-        return preds, target
+        bleu_metric = BLEUScore()
+        bleu_score = bleu_metric(preds, target)
+
+        return loss, bleu_score
 
     def configure_optimizers(self):
         return torch.optim.Adam(
@@ -145,3 +153,11 @@ class T5Finetuner(pl.LightningModule):
             num_workers=8,
             pin_memory=True,
         )
+
+    def validation_epoch_end(self, val_step_outputs: List):
+
+        avg_loss = [i[0] for i in val_step_outputs].mean()
+        avg_bleu_score = [i[1] for i in val_step_outputs].mean()
+
+        self.log("val_loss", avg_loss)
+        self.log("val_bleu", avg_bleu_score)
