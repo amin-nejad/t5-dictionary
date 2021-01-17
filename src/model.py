@@ -155,8 +155,8 @@ class T5Finetuner(pl.LightningModule):
 
     def validation_epoch_end(self, val_step_outputs: List):
 
-        avg_loss = [i[0] for i in val_step_outputs].mean()
-        avg_bleu_score = [i[1] for i in val_step_outputs].mean()
+        avg_loss = np.mean([i[0] for i in val_step_outputs])
+        avg_bleu_score = np.mean([i[1] for i in val_step_outputs])
 
         self.log("val_loss", avg_loss)
         self.log("val_bleu", avg_bleu_score)
