@@ -1,9 +1,14 @@
 # requirements.in
 black
 fire
+isort
+flake8
+flake8-bugbear
 jupytext
 notebook
 pandas
+pip-tools
+pre-commit
 python-dotenv
 pytorch-lightning
 torch

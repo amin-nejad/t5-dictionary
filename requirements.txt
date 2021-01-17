@@ -9,7 +9,9 @@ absl-py==0.11.0
 aplus==0.11.0
     # via vaex-core
 appdirs==1.4.4
-    # via black
+    # via
+    #   black
+    #   virtualenv
 argon2-cffi==20.1.0
     # via notebook
 astropy==4.2
@@ -18,6 +20,7 @@ async-generator==1.10
     # via nbclient
 attrs==20.3.0
     # via
+    #   flake8-bugbear
     #   jsonschema
     #   markdown-it-py
 backcall==0.2.0
@@ -47,11 +50,14 @@ certifi==2020.11.8
     #   sentry-sdk
 cffi==1.14.4
     # via argon2-cffi
+cfgv==3.2.0
+    # via pre-commit
 chardet==3.0.4
     # via requests
 click==7.1.2
     # via
     #   black
+    #   pip-tools
     #   sacremoses
     #   wandb
 cloudpickle==1.6.0
@@ -68,14 +74,24 @@ decorator==4.4.2
     # via ipython
 defusedxml==0.6.0
     # via nbconvert
+distlib==0.3.1
+    # via virtualenv
 docker-pycreds==0.4.0
     # via wandb
 entrypoints==0.3
     # via nbconvert
 filelock==3.0.12
-    # via transformers
+    # via
+    #   transformers
+    #   virtualenv
 fire==0.3.1
     # via -r requirements.in
+flake8-bugbear==20.11.1
+    # via -r requirements.in
+flake8==3.8.4
+    # via
+    #   -r requirements.in
+    #   flake8-bugbear
 fsspec==0.8.4
     # via pytorch-lightning
 future==0.18.2
@@ -97,6 +113,8 @@ grpcio==1.34.0
     # via tensorboard
 h5py==3.1.0
     # via vaex-hdf5
+identify==1.5.13
+    # via pre-commit
 idna==2.10
     # via requests
 ipydatawidgets==4.1.0
@@ -137,6 +155,8 @@ ipywidgets==7.5.1
     #   ipyvue
     #   ipywebrtc
     #   pythreejs
+isort==5.7.0
+    # via -r requirements.in
 jedi==0.17.2
     # via ipython
 jinja2==2.11.2
@@ -185,6 +205,8 @@ matplotlib==3.3.3
     #   ipympl
     #   vaex-arrow
     #   vaex-viz
+mccabe==0.6.1
+    # via flake8
 mdit-py-plugins==0.2.4
     # via markdown-it-py
 mistune==0.8.4
@@ -206,6 +228,8 @@ nest-asyncio==1.4.3
     # via
     #   nbclient
     #   vaex-core
+nodeenv==1.5.0
+    # via pre-commit
 notebook==6.1.5
     # via
     #   -r requirements.in
@@ -262,6 +286,10 @@ pillow==8.0.1
     #   matplotlib
     #   vaex-arrow
     #   vaex-viz
+pip-tools==5.5.0
+    # via -r requirements.in
+pre-commit==2.9.3
+    # via -r requirements.in
 progressbar2==3.53.1
     # via vaex-core
 prometheus-client==0.9.0
@@ -291,10 +319,14 @@ pyasn1==0.4.8
     # via
     #   pyasn1-modules
     #   rsa
+pycodestyle==2.6.0
+    # via flake8
 pycparser==2.20
     # via cffi
 pyerfa==1.7.1.1
     # via astropy
+pyflakes==2.2.0
+    # via flake8
 pygments==2.7.2
     # via
     #   ipython
@@ -327,6 +359,7 @@ pyyaml==5.3.1
     # via
     #   dask
     #   jupytext
+    #   pre-commit
     #   pytorch-lightning
     #   vaex-core
     #   wandb
@@ -386,6 +419,7 @@ six==1.15.0
     #   sacremoses
     #   tensorboard
     #   vaex-core
+    #   virtualenv
     #   wandb
 smmap==3.0.4
     # via gitdb
@@ -409,6 +443,7 @@ toml==0.10.2
     # via
     #   black
     #   jupytext
+    #   pre-commit
 toolz==0.11.1
     # via dask
 torch==1.7.0
@@ -490,6 +525,8 @@ vaex-viz==0.4.0
     #   vaex-jupyter
 vaex==3.0.0
     # via -r requirements.in
+virtualenv==20.3.1
+    # via pre-commit
 wandb==0.10.12
     # via -r requirements.in
 watchdog==0.10.4
@@ -508,4 +545,5 @@ xarray==0.16.1
     # via vaex-jupyter
 
 # The following packages are considered to be unsafe in a requirements file:
+# pip
 # setuptools
