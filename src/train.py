@@ -35,7 +35,7 @@ def main(path_to_dataset: str = "data/dictionary.csv", model_name: str = "t5-sma
     trainer = pl.Trainer(
         gpus=num_gpus,
         accelerator="ddp",
-        max_epochs=hparams.MAX_EPOCHS,
+        max_epochs=hparams["MAX_EPOCHS"],
         logger=wandb_logger,
         precision=16,
     )
