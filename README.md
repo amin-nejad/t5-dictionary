@@ -25,7 +25,7 @@ Data is a direct copy of the `data` directory from the fantastic [wordset dictio
 Format and preprocess the data as a csv file:
 
 ```bash
-python -m src.preprocess
+python src/preprocess.py
 ```
 
 ## Hyperparameters
@@ -35,7 +35,7 @@ These are defined in the `.env` file.
 ## Training
 
 ```bash
-python -m src.train
+python src/train.py
 ```
 
 Arguments can optionally be provided e.g. `--model_name=t5-large`
