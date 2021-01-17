@@ -30,7 +30,7 @@ class CustomDataset(Dataset):
         self.target_text = self.data.target_text
 
     def __len__(self):
-        return len(self.text)
+        return len(self.input_text)
 
     def __getitem__(self, index):
         input_text = str(self.input_text[index])
