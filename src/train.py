@@ -24,7 +24,7 @@ def main(path_to_dataset: str = "data/dictionary.csv", model_name: str = "t5-sma
     )
     wandb_logger.log_hyperparams(hparams)
 
-    pl.seed_everything(hparams.SEED)
+    pl.seed_everything(hparams["seed"])
 
     model = T5Finetuner(
         path_to_dataset=path_to_dataset,

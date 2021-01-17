@@ -43,14 +43,14 @@ class T5Finetuner(pl.LightningModule):
         self.training_set = CustomDataset(
             df_train.reset_index(drop=True),
             self.tokenizer,
-            self.hparams.MAX_INPUT_LEN,
-            self.hparams.MAX_OUTPUT_LEN,
+            self.hparams["MAX_INPUT_LEN"],
+            self.hparams["MAX_OUTPUT_LEN"],
         )
         self.val_set = CustomDataset(
             df_validate.reset_index(drop=True),
             self.tokenizer,
-            self.hparams.MAX_INPUT_LEN,
-            self.hparams.MAX_OUTPUT_LEN,
+            self.hparams["MAX_INPUT_LEN"],
+            self.hparams["MAX_OUTPUT_LEN"],
         )
 
     def forward(self, source_ids: torch.Tensor, source_mask: torch.Tensor = None):
@@ -59,10 +59,10 @@ class T5Finetuner(pl.LightningModule):
         generated_ids = self.model.generate(
             input_ids=source_ids,
             attention_mask=source_mask,
-            max_length=self.hparams.MAX_OUTPUT_LEN,
-            num_beams=self.hparams.NUM_BEAMS,
-            repetition_penalty=self.hparams.REPETITION_PENALTY,
-            length_penalty=self.hparams.LENGTH_PENALTY,
+            max_length=self.hparams["MAX_OUTPUT_LEN"],
+            num_beams=self.hparams["NUM_BEAMS"],
+            repetition_penalty=self.hparams["REPETITION_PENALTY"],
+            length_penalty=self.hparams["LENGTH_PENALTY"],
             early_stopping=True,
         )
         preds = [
@@ -132,14 +132,14 @@ class T5Finetuner(pl.LightningModule):
 
     def configure_optimizers(self):
         return torch.optim.Adam(
-            params=self.model.parameters(), lr=self.hparams.LEARNING_RATE
+            params=self.model.parameters(), lr=self.hparams["LEARNING_RATE"]
         )
 
     def train_dataloader(self):
 
         return DataLoader(
             self.training_set,
-            batch_size=self.hparams.TRAIN_BATCH_SIZE,
+            batch_size=self.hparams["TRAIN_BATCH_SIZE"],
             num_workers=8,
             pin_memory=True,
         )
@@ -148,7 +148,7 @@ class T5Finetuner(pl.LightningModule):
 
         return DataLoader(
             self.val_set,
-            batch_size=self.hparams.VALID_BATCH_SIZE,
+            batch_size=self.hparams["VALID_BATCH_SIZE"],
             num_workers=8,
             pin_memory=True,
         )
