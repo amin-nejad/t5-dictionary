@@ -13,7 +13,7 @@ def main(path_to_dataset: str = "data/dictionary.csv", model_name: str = "t5-sma
     """Training script."""
 
     with open("config.yaml", "r") as stream:
-        cfg = yaml.load(stream)
+        cfg = yaml.safe_load(stream)
 
     hparams = cfg["hyperparameters"]
     num_gpus = cfg["NUM_GPUS"]
