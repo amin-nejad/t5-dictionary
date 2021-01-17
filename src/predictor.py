@@ -1,5 +1,5 @@
 import torch
-from transformers import AutoTokenizer, AutoModelWithLMHead
+from transformers import AutoModelWithLMHead, AutoTokenizer
 
 
 class PythonPredictor:
