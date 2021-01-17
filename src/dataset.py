@@ -1,37 +1,54 @@
 """Custom Dataset."""
-from torch.utils.data import Dataset
+import pandas as pd
 import torch
+from torch.utils.data import Dataset
+from transformers import PreTrainedTokenizer
 
 
 class CustomDataset(Dataset):
-    def __init__(self, dataframe, tokenizer, source_len, summ_len):
+    """Custom Dataset for our dictionary task.
+
+    Args:
+        dataframe (pd.DataFrame): pandas dataframe containing the data
+        tokenizer (PreTrainedTokenizer): Tokenizer from Huggingface
+        source_len (int): maximum source sequence length
+        target_len (int): maximum target sequence length
+    """
+
+    def __init__(
+        self,
+        dataframe: pd.DataFrame,
+        tokenizer: PreTrainedTokenizer,
+        source_len: int,
+        target_len: int,
+    ):
         self.tokenizer = tokenizer
         self.data = dataframe
         self.source_len = source_len
-        self.summ_len = summ_len
-        self.text = self.data.target_text
-        self.ctext = self.data.input_text
+        self.target_len = target_len
+        self.input_text = self.data.input_text
+        self.target_text = self.data.target_text
 
     def __len__(self):
         return len(self.text)
 
     def __getitem__(self, index):
-        ctext = str(self.ctext[index])
-        ctext = " ".join(ctext.split())
+        input_text = str(self.input_text[index])
+        input_text = " ".join(input_text.split())
 
-        text = str(self.text[index])
-        text = " ".join(text.split())
+        target_text = str(self.target_text[index])
+        target_text = " ".join(target_text.split())
 
         source = self.tokenizer.batch_encode_plus(
-            [ctext],
+            [input_text],
             max_length=self.source_len,
             truncation=True,
             padding="max_length",
             return_tensors="pt",
         )
         target = self.tokenizer.batch_encode_plus(
-            [text],
-            max_length=self.summ_len,
+            [target_text],
+            max_length=self.target_len,
             truncation=True,
             padding="max_length",
             return_tensors="pt",
