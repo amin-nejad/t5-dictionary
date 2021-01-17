@@ -6,8 +6,10 @@ class PythonPredictor:
     def __init__(self, config):
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         print(f"using device: {self.device}")
-        self.tokenizer = AutoTokenizer.from_pretrained("t5-large")
-        self.model = AutoModelWithLMHead.from_pretrained("t5-large").to(self.device)
+        self.tokenizer = AutoTokenizer.from_pretrained("t5-small")
+        self.model = AutoModelWithLMHead.from_pretrained(
+            "../lightning_logs/version_4/checkpoints"
+        ).to("self.device")
 
     def predict(self, payload):
         tokens = self.tokenizer.encode(payload["text"], return_tensors="pt").to(

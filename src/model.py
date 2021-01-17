@@ -3,13 +3,12 @@ import numpy as np
 import pandas as pd
 import pytorch_lightning as pl
 import torch
-import torch.nn.functional as F
-import wandb
-from torch import cuda
-from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
+from torch.utils.data import DataLoader
 from transformers import T5ForConditionalGeneration, T5Tokenizer
 
-from src.dataset import CustomDataset
+import wandb
+
+from .dataset import CustomDataset
 
 
 class T5Finetuner(pl.LightningModule):
@@ -32,10 +31,6 @@ class T5Finetuner(pl.LightningModule):
 
         if not model_name:
             model_name = "t5-small"
-
-        torch.manual_seed(config.SEED)
-        np.random.seed(config.SEED)
-        torch.backends.cudnn.deterministic = True
 
         self.tokenizer = T5Tokenizer.from_pretrained(model_name, truncation=True)
 

@@ -1,12 +1,15 @@
 """Training script."""
-import time
+from time import gmtime, strftime
 
 import fire
+import numpy as np
 import pytorch_lightning as pl
-import wandb
+import torch
 import yaml
 
-from src.model import T5Finetuner
+import wandb
+
+from .model import T5Finetuner
 
 
 def main(path_to_dataset: str = "data/dictionary.csv", model_name: str = None):
@@ -14,9 +17,16 @@ def main(path_to_dataset: str = "data/dictionary.csv", model_name: str = None):
 
     with open("config.yaml", "r") as stream:
         cfg = yaml.load(stream)
-    wandb.init(project=f"t5-dictionary-{time.time()}", config=cfg["hyperparameters"])
+    wandb.init(
+        project=f"t5-dictionary-{strftime('%Y%m%d-%H%M%S', gmtime())}",
+        config=cfg["hyperparameters"],
+    )
 
     num_gpus = cfg["NUM_GPUS"]
+
+    torch.manual_seed(wandb.config.SEED)
+    np.random.seed(wandb.config.SEED)
+    torch.backends.cudnn.deterministic = True
 
     model = T5Finetuner(
         path_to_dataset=path_to_dataset,
@@ -24,7 +34,9 @@ def main(path_to_dataset: str = "data/dictionary.csv", model_name: str = None):
         model_name=model_name,
     )
 
-    trainer = pl.Trainer(gpus=num_gpus, accelerator="ddp", num_nodes=1)
+    trainer = pl.Trainer(
+        gpus=num_gpus, accelerator="ddp", max_epochs=wandb.config.MAX_EPOCHS
+    )
     trainer.fit(model)
 
 
