@@ -2,40 +2,42 @@
 from time import gmtime, strftime
 
 import fire
-import numpy as np
 import pytorch_lightning as pl
-import torch
 import yaml
-
-import wandb
+from pytorch_lightning.loggers import WandbLogger
 
 from .model import T5Finetuner
 
 
-def main(path_to_dataset: str = "data/dictionary.csv", model_name: str = None):
+def main(path_to_dataset: str = "data/dictionary.csv", model_name: str = "t5-small"):
     """Training script."""
 
     with open("config.yaml", "r") as stream:
         cfg = yaml.load(stream)
-    wandb.init(
-        project=f"t5-dictionary-{strftime('%Y%m%d-%H%M%S', gmtime())}",
-        config=cfg["hyperparameters"],
-    )
 
+    hparams = cfg["hyperparameters"]
     num_gpus = cfg["NUM_GPUS"]
 
-    torch.manual_seed(wandb.config.SEED)
-    np.random.seed(wandb.config.SEED)
-    torch.backends.cudnn.deterministic = True
+    wandb_logger = WandbLogger(
+        project="t5-dictionary",
+        name=f"t5-dictionary-{strftime('%Y%m%d-%H%M%S', gmtime())}",
+    )
+    wandb_logger.log_hyperparams(hparams)
+
+    pl.seed_everything(hparams.SEED)
 
     model = T5Finetuner(
         path_to_dataset=path_to_dataset,
-        config=wandb.config,
+        hparams=hparams,
         model_name=model_name,
     )
 
     trainer = pl.Trainer(
-        gpus=num_gpus, accelerator="ddp", max_epochs=wandb.config.MAX_EPOCHS
+        gpus=num_gpus,
+        accelerator="ddp",
+        max_epochs=hparams.MAX_EPOCHS,
+        logger=wandb_logger,
+        precision=16,
     )
     trainer.fit(model)
 
