@@ -6,7 +6,7 @@ import pytorch_lightning as pl
 import yaml
 from pytorch_lightning.loggers import WandbLogger
 
-from .model import T5Finetuner
+from model import T5Finetuner
 
 
 def main(path_to_dataset: str = "data/dictionary.csv", model_name: str = "t5-small"):

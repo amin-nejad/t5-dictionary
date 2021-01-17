@@ -6,11 +6,11 @@ import numpy as np
 import pandas as pd
 import pytorch_lightning as pl
 import torch
-from pytorch_lightning.metrics.nlp import BLEUScore
+from pytorch_lightning.metrics.functional.nlp import bleu_score
 from torch.utils.data import DataLoader
 from transformers import T5ForConditionalGeneration, T5Tokenizer
 
-from .dataset import CustomDataset
+from dataset import CustomDataset
 
 
 class T5Finetuner(pl.LightningModule):
@@ -126,10 +126,9 @@ class T5Finetuner(pl.LightningModule):
             for t in y
         ]
 
-        bleu_metric = BLEUScore()
-        bleu_score = bleu_metric(preds, target)
+        bleu_score_val = bleu_score(preds, target)
 
-        return loss, bleu_score
+        return loss, bleu_score_val
 
     def configure_optimizers(self):
         return torch.optim.Adam(
