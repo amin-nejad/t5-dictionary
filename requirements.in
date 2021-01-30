@@ -12,7 +12,8 @@ pre-commit
 python-dotenv
 pytorch-lightning
 torch
+torch_optimizer
 tqdm
-transformers
+transformers==4.2.2
 vaex
 wandb

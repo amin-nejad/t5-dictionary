@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import pytorch_lightning as pl
 import torch
+from fairseq import optim
 from pytorch_lightning.metrics.functional.nlp import bleu_score
 from torch.utils.data import DataLoader
 from transformers import T5ForConditionalGeneration, T5Tokenizer
@@ -36,7 +37,7 @@ class T5Finetuner(pl.LightningModule):
         self.tokenizer.add_tokens(["<speech_part>", "<def>", "<example>"])
 
         df = pd.read_csv(path_to_dataset)
-        df_train, df_validate = np.split(df, [int(0.9 * len(df))])
+        df_train, df_validate = np.split(df, [int(0.95 * len(df))])
 
         self.model = T5ForConditionalGeneration.from_pretrained(model_name)
 
@@ -78,7 +79,6 @@ class T5Finetuner(pl.LightningModule):
         """Returns loss. Used by both training and validation loops."""
 
         pad_token_id = self.tokenizer.pad_token_id
-        y_ids = y[:, :-1].contiguous()
         lm_labels = y[:, 1:].clone()
 
         # Replace pad token id with -100
@@ -88,7 +88,6 @@ class T5Finetuner(pl.LightningModule):
         outputs = self.model(
             source_ids,
             attention_mask=source_mask,
-            decoder_input_ids=y_ids,
             labels=lm_labels,
         )
         loss = outputs[0]
@@ -131,8 +130,12 @@ class T5Finetuner(pl.LightningModule):
         return loss, bleu_score_val
 
     def configure_optimizers(self):
-        return torch.optim.Adam(
-            params=self.model.parameters(), lr=self.hparams["LEARNING_RATE"]
+
+        return optim.adafactor.Adafactor(
+            params=self.model.parameters(),
+            lr=self.hparams["LEARNING_RATE"],
+            scale_parameter=False,
+            relative_step=False,
         )
 
     def train_dataloader(self):

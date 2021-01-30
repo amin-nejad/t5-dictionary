@@ -1,6 +1,4 @@
 """Training script."""
-from time import gmtime, strftime
-
 import fire
 import pytorch_lightning as pl
 import yaml
@@ -18,10 +16,7 @@ def main(path_to_dataset: str = "data/dictionary.csv", model_name: str = "t5-sma
     hparams = cfg["hyperparameters"]
     num_gpus = cfg["NUM_GPUS"]
 
-    wandb_logger = WandbLogger(
-        project="t5-dictionary",
-        name=f"t5-dictionary-{strftime('%Y%m%d-%H%M%S', gmtime())}",
-    )
+    wandb_logger = WandbLogger(project="t5-dictionary")
     wandb_logger.log_hyperparams(hparams)
 
     pl.seed_everything(hparams["SEED"])
@@ -37,7 +32,6 @@ def main(path_to_dataset: str = "data/dictionary.csv", model_name: str = "t5-sma
         accelerator="ddp",
         max_epochs=hparams["MAX_EPOCHS"],
         logger=wandb_logger,
-        precision=16,
     )
     trainer.fit(model)
 

@@ -301,7 +301,6 @@ prompt-toolkit==3.0.8
 protobuf==3.14.0
     # via
     #   tensorboard
-    #   transformers
     #   wandb
 psutil==5.7.3
     # via
@@ -353,6 +352,8 @@ pythreejs==2.2.1
     # via ipyvolume
 pytorch-lightning==1.0.8
     # via -r requirements.in
+pytorch-ranger==0.1.1
+    # via torch-optimizer
 pytz==2020.4
     # via pandas
 pyyaml==5.3.1
@@ -392,8 +393,6 @@ sacremoses==0.0.43
     # via transformers
 send2trash==1.5.0
     # via notebook
-sentencepiece==0.1.91
-    # via transformers
 sentry-sdk==0.19.4
     # via wandb
 shortuuid==1.0.1
@@ -437,7 +436,7 @@ terminado==0.9.1
     # via notebook
 testpath==0.4.4
     # via nbconvert
-tokenizers==0.9.3
+tokenizers==0.9.4
     # via transformers
 toml==0.10.2
     # via
@@ -446,10 +445,14 @@ toml==0.10.2
     #   pre-commit
 toolz==0.11.1
     # via dask
+torch-optimizer==0.1.0
+    # via -r requirements.in
 torch==1.7.0
     # via
     #   -r requirements.in
     #   pytorch-lightning
+    #   pytorch-ranger
+    #   torch-optimizer
 tornado==6.1
     # via
     #   ipykernel
@@ -484,7 +487,7 @@ traittypes==0.2.1
     #   ipydatawidgets
     #   ipyleaflet
     #   ipyvolume
-transformers==3.5.1
+https://github.com/huggingface/transformers/archive/v4.2.2.zip
     # via -r requirements.in
 typed-ast==1.4.1
     # via black

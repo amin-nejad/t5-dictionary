@@ -5,6 +5,7 @@ The file contains two columns: 'input_text' and 'output_text'.
 """
 # %%
 import string
+from typing import List
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -13,17 +14,17 @@ from tqdm import tqdm
 
 
 # %%
-def preprocess_meanings(meanings: str) -> str:
+def preprocess_meanings(meanings: List[str]) -> str:
     """Preprocess meanings.
 
     Outputs a string of the form:
 
-        <NUMBER> <PART_OF_SPEECH> <DEFINTION> ...
+        <PART_OF_SPEECH> <DEFINTION> <EXAMPLE>...
 
         e.g.
 
-        1 <speech_part> noun <def> this is a definition \
-            2 <speech_part> noun <def> another definition etc.
+        <speech_part> noun <def> this is a definition <example> blah \
+            <speech_part> noun <def> another definition <example> blah2 etc.
 
     Args:
         definitions (str): JSON of word definitions as a string.
@@ -32,8 +33,7 @@ def preprocess_meanings(meanings: str) -> str:
         str: preprocessed string of definitions
     """
     concatenated_meanings = []
-    for i, meaning in enumerate(meanings):
-        concatenated_meanings.append(str(i + 1))
+    for meaning in meanings:
 
         # PART OF SPEECH
         speech_part = meaning.get("speech_part")
