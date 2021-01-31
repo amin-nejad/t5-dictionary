@@ -7,12 +7,12 @@ import numpy as np
 import pandas as pd
 import pytorch_lightning as pl
 import torch
-import yaml
 from fairseq import optim
 from pytorch_lightning.metrics.functional.nlp import bleu_score
 from torch.utils.data import DataLoader
 from transformers import T5ForConditionalGeneration, T5Tokenizer
 
+import wandb
 from dataset import CustomDataset
 
 
@@ -39,7 +39,9 @@ class T5Finetuner(pl.LightningModule):
         self.tokenizer.add_tokens(["<speech_part>", "<def>", "<example>"])
 
         df = pd.read_csv(path_to_dataset)
-        df_train, df_validate = np.split(df, [int(0.99 * len(df))])
+        _, df_train, df_validate = np.split(
+            df, [int(0.9 * len(df)), int(0.99 * len(df))]
+        )
 
         self.model = T5ForConditionalGeneration.from_pretrained(model_name)
 
@@ -195,11 +197,15 @@ class T5Finetuner(pl.LightningModule):
                         ],
                     )
                 ).items(),
-                5,
+                20,
             )
         )
 
-        print(yaml.dump(val_samples))
+        val_df = pd.DataFrame.from_dict(
+            val_samples, orient="index", columns=["pred", "targ"]
+        )
+        val_df.index = val_df.index.set_names(["source"])
+        self.log("val_text", wandb.Table(dataframe=val_df.reset_index()))
 
         self.validation_sources = []
         self.validation_preds = []

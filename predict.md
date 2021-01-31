@@ -21,6 +21,7 @@ from time import gmtime, strftime
 from pytorch_lightning.metrics.functional.nlp import bleu_score
 import pandas as pd
 import matplotlib.pyplot as plt
+import wandb
 import yaml
 ```
 
@@ -45,7 +46,23 @@ c = [4,5,6]
 ```
 
 ```python
-dict(zip(a, [[i,j] for i,j in zip(b,c)]))
+d = dict(zip(a, [[i,j] for i,j in zip(b,c)]))
+```
+
+```python
+df = pd.DataFrame.from_dict(d, orient='index', columns=['pred', 'targ'])
+```
+
+```python
+df.index = df.index.set_names(['foo'])
+```
+
+```python
+df.reset_index()
+```
+
+```python
+wandb.Table(dataframe=df)
 ```
 
 ```python
