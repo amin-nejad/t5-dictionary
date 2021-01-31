@@ -25,6 +25,30 @@ import yaml
 ```
 
 ```python
+from pytorch_lightning.loggers import WandbLogger
+
+wandb_logger = WandbLogger(project="t5-dictionary")
+```
+
+```python
+wandb_logger.experiment.name
+```
+
+```python
+b = [1,2,3]
+a = ['a', 'b', 'c']
+c = [4,5,6]
+```
+
+```python
+[[i,j] for i,j in zip(b,c)]
+```
+
+```python
+dict(zip(a, [[i,j] for i,j in zip(b,c)]))
+```
+
+```python
 data = pd.read_csv("data/dictionary.csv")
 ```
 
@@ -53,41 +77,46 @@ hparams=cfg["hyperparameters"]
 
 ```python
 model = T5Finetuner.load_from_checkpoint(
-    "t5-dictionary/1crc67p7/checkpoints/epoch=1.ckpt",
-#     "t5-dictionary/3g4wegxm/checkpoints/epoch=0.ckpt",
+#     "t5-dictionary/1crc67p7/checkpoints/epoch=1.ckpt",
+    "t5-dictionary/1shmk59z/checkpoints/epoch=0.ckpt",
     path_to_dataset="data/dictionary.csv",
     hparams=hparams,
-    model_name="t5-large"
+    model_name="t5-small"
 )
 
 ```
 
 ```python
-text = "define: twat"
+text = "define: twonk"
 target = data.iloc[data.index[data.input_text == text][0]][1]
 target
 ```
 
 ```python
+tokens = model.tokenizer.encode("define: blah", return_tensors="pt")
+tokens2 = model.tokenizer.encode("define: blaf", return_tensors="pt")
+```
+
+```python
+import torch
+```
+
+```python
+a=torch.stack([tokens, tokens2])
+```
+
+```python
+a.squeeze()
+```
+
+```python
 tokens = model.tokenizer.encode(text, return_tensors="pt")
-output = model(tokens)
+output = model(a.squeeze())
 output
 ```
 
 ```python
-tokens
-```
-
-```python
-model.tokenizer.encode(target, return_tensors="pt")
-```
-
-```python
-target.split()
-```
-
-```python
-output[0].split()
+[output[0].split()]
 ```
 
 ```python
@@ -99,13 +128,17 @@ bleu_score([['cat', 'on', 'the', 'mat']], [[['testing', 'on', 'where'], ['testin
 ```
 
 ```python
-translate_corpus = ['cat is on mat'.split()]
-reference_corpus = [['a cat is on the mat'.split(), 'a cat is on the mat'.split()]]
-bleu_score(translate_corpus, reference_corpus)
+translate_corpus = ['a cat is on blah b'.split()]
+reference_corpus = [['there is a cat is on the mat'.split()]]
+bleu_score(translate_corpus, reference_corpus).item()
 ```
 
 ```python
-[['there is a cat on the mat'.split(), 'a cat is on the mat'.split()]]
+torch.mean(torch.stack([torch.tensor(1.), torch.tensor(2.)]))
+```
+
+```python
+reference_corpus
 ```
 
 ```python
@@ -118,4 +151,8 @@ bleu_score(translate_corpus, reference_corpus)
 
 ```python
 reference_corpus
+```
+
+```python
+
 ```

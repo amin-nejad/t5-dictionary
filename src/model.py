@@ -1,11 +1,13 @@
 """Model defined here."""
 
+import random
 from typing import Dict, List, Union
 
 import numpy as np
 import pandas as pd
 import pytorch_lightning as pl
 import torch
+import yaml
 from fairseq import optim
 from pytorch_lightning.metrics.functional.nlp import bleu_score
 from torch.utils.data import DataLoader
@@ -37,7 +39,7 @@ class T5Finetuner(pl.LightningModule):
         self.tokenizer.add_tokens(["<speech_part>", "<def>", "<example>"])
 
         df = pd.read_csv(path_to_dataset)
-        df_train, df_validate = np.split(df, [int(0.95 * len(df))])
+        df_train, df_validate = np.split(df, [int(0.99 * len(df))])
 
         self.model = T5ForConditionalGeneration.from_pretrained(model_name)
 
@@ -53,6 +55,10 @@ class T5Finetuner(pl.LightningModule):
             self.hparams["MAX_INPUT_LEN"],
             self.hparams["MAX_OUTPUT_LEN"],
         )
+
+        self.validation_sources = []
+        self.validation_preds = []
+        self.validation_targs = []
 
     def forward(self, source_ids: torch.Tensor, source_mask: torch.Tensor = None):
         """Forward method for performing inference."""
@@ -78,12 +84,11 @@ class T5Finetuner(pl.LightningModule):
     def _get_loss(self, source_ids, source_mask, y) -> float:
         """Returns loss. Used by both training and validation loops."""
 
-        pad_token_id = self.tokenizer.pad_token_id
-        lm_labels = y[:, 1:].clone()
+        lm_labels = y.clone()
 
         # Replace pad token id with -100
         # See https://github.com/huggingface/transformers/issues/6238
-        lm_labels[y[:, 1:] == pad_token_id] = -100
+        lm_labels[y == self.tokenizer.pad_token_id] = -100
 
         outputs = self.model(
             source_ids,
@@ -118,16 +123,29 @@ class T5Finetuner(pl.LightningModule):
 
         preds = self(source_ids, source_mask)
 
-        target = [
+        source_text = [
+            self.tokenizer.decode(
+                x, skip_special_tokens=True, clean_up_tokenization_spaces=True
+            )
+            for x in source_ids
+        ]
+
+        targs = [
             self.tokenizer.decode(
                 t, skip_special_tokens=True, clean_up_tokenization_spaces=True
             )
             for t in y
         ]
 
-        bleu_score_val = bleu_score(preds, target)
+        self.validation_sources.extend(source_text)
+        self.validation_preds.extend(preds)
+        self.validation_targs.extend(targs)
 
-        return loss, bleu_score_val
+        bleu_scores = []
+        for pred, targ in zip(preds, targs):
+            bleu_scores.append(bleu_score([pred.split()], [[targ.split()]]))
+
+        return loss, torch.mean(torch.stack(bleu_scores))
 
     def configure_optimizers(self):
 
@@ -163,3 +181,26 @@ class T5Finetuner(pl.LightningModule):
 
         self.log("val_loss", avg_loss)
         self.log("val_bleu", avg_bleu_score)
+
+        val_samples = dict(
+            random.sample(
+                dict(
+                    zip(
+                        self.validation_sources,
+                        [
+                            [i, j]
+                            for i, j in zip(
+                                self.validation_preds, self.validation_targs
+                            )
+                        ],
+                    )
+                ).items(),
+                5,
+            )
+        )
+
+        print(yaml.dump(val_samples))
+
+        self.validation_sources = []
+        self.validation_preds = []
+        self.validation_targs = []
