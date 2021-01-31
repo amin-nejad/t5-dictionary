@@ -2,6 +2,7 @@
 black
 fire
 isort
+fairseq
 flake8
 flake8-bugbear
 jupytext
@@ -12,7 +13,6 @@ pre-commit
 python-dotenv
 pytorch-lightning
 torch
-torch_optimizer
 tqdm
 transformers==4.2.2
 vaex
