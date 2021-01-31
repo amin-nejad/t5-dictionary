@@ -39,9 +39,7 @@ class T5Finetuner(pl.LightningModule):
         self.tokenizer.add_tokens(["<speech_part>", "<def>", "<example>"])
 
         df = pd.read_csv(path_to_dataset)
-        _, df_train, df_validate = np.split(
-            df, [int(0.9 * len(df)), int(0.99 * len(df))]
-        )
+        df_train, df_validate = np.split(df, [int(0.99 * len(df))])
 
         self.model = T5ForConditionalGeneration.from_pretrained(model_name)
 
