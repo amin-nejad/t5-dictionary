@@ -1,6 +1,5 @@
 """Model defined here."""
 
-import random
 from typing import Dict, List, Union
 
 import numpy as np
@@ -183,22 +182,11 @@ class T5Finetuner(pl.LightningModule):
         self.log("val_bleu", avg_bleu_score)
 
         val_samples = dict(
-            random.sample(
-                dict(
-                    zip(
-                        self.validation_sources,
-                        [
-                            [i, j]
-                            for i, j in zip(
-                                self.validation_preds, self.validation_targs
-                            )
-                        ],
-                    )
-                ).items(),
-                20,
+            zip(
+                self.validation_sources,
+                [[i, j] for i, j in zip(self.validation_preds, self.validation_targs)],
             )
         )
-
         val_df = pd.DataFrame.from_dict(
             val_samples, orient="index", columns=["pred", "targ"]
         )
